@@ -21,7 +21,7 @@ void Snake::Grow()
 	
 	if (nSegments < nSegmentsMax)
 	{
-		segments[nSegments].InitBody();
+		segments[nSegments].InitBody(nSegments);
 		nSegments++;
 	}
 }
@@ -53,15 +53,36 @@ bool Snake::IsInTileExceptEnd(const Location& loc) const
 	return false;
 }
 
+bool Snake::IsInTile(const Location& loc) const
+{
+	for (int i = 0; i < nSegments; i++)
+	{
+		if (segments[i].GetLocation() == loc)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void Snake::Segment::InitHead(const Location& in_loc)
 {
 	loc = in_loc;
 	c = Snake::headColor;
 }
 
-void Snake::Segment::InitBody()
+void Snake::Segment::InitBody(int n )
 {
-	c = Snake::bodyColor;
+	int g;
+	if ((n - 1) % 4 == 3)
+	{
+		g = 100 + 70;
+	}
+	else
+	{
+		g = 100 + 70 * ((n - 1) % 4);
+	}
+	c = Colors::MakeRGB(0, g, 0);
 }
 
 void Snake::Segment::Follow(const Segment& next)

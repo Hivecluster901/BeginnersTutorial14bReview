@@ -10,9 +10,9 @@
 class Goal
 {
 public:
-	Goal(const Board& brd, std::mt19937& rng);
-	void Respawn(const Board& brd, std::mt19937& rng);
-	void Draw(Graphics& gfx, const Board& brd) const;
+	Goal(const Board& brd, std::mt19937& rng, const Snake& snake);
+	void Respawn(const Board& brd, std::mt19937& rng, const Snake& snake);
+	void Draw(Board& brd) const;
 	const Location& GetLocation() const;
 private:
 	Location loc;

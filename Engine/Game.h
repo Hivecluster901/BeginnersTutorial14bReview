@@ -49,12 +49,16 @@ private:
 	/*  User Variables              */
     std::random_device rd;
     std::mt19937 rng;
-    static constexpr int snekMovePeriod = 20;
+    int defaultSnekMovePeriod = 20;
+    int snekMovePeriod = defaultSnekMovePeriod;
+    int snekAccelerationPerFrame = 1000;
     int snekMoveCounter = 0;
+    int frameNumber = 0;
     Board brd;
     Location delta_loc = { 1, 0 };
     Snake snek;
     Goal goal;
+    bool isStarted = false;
     bool isGameOver = false;
 	/********************************/
 };

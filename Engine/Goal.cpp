@@ -1,21 +1,24 @@
 #include "Goal.h"
 
-Goal::Goal(const Board& brd, std::mt19937& rng)
+Goal::Goal(const Board& brd, std::mt19937& rng, const Snake& snake)
 {
-	Respawn(brd, rng);
+	Respawn(brd, rng, snake);
 }
 
-void Goal::Respawn(const Board& brd, std::mt19937& rng)
+void Goal::Respawn(const Board& brd, std::mt19937& rng, const Snake& snake)
 {
 	std::uniform_int_distribution<int> xDist(brd.GetStartX(), brd.GetStartX() + brd.GetGridWidth());
 	std::uniform_int_distribution<int> yDist(brd.GetStartY(), brd.GetStartY() + brd.GetGridHeight());
 
-	loc = { xDist(rng), yDist(rng) };
+	do
+	{
+		loc = { xDist(rng), yDist(rng) };
+	} while (snake.IsInTile(loc));
 }
 
-void Goal::Draw(Graphics& gfx, const Board& brd) const
+void Goal::Draw(Board& brd) const
 {
-	gfx.DrawRectDim(loc.x * brd.GetDimension(), loc.y * brd.GetDimension(), brd.GetDimension(), brd.GetDimension(), goalColor);
+	brd.DrawCell(loc, goalColor);
 }
 
 const Location& Goal::GetLocation() const

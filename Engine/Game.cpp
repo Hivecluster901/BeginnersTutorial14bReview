@@ -30,7 +30,7 @@ Game::Game(MainWindow& wnd)
     rng(rd()),
     brd(gfx),
     snek({ 9,5 }),
-    goal(brd, rng)
+    goal(brd, rng, snek)
     
 {
     
@@ -46,51 +46,77 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-    brd.DrawBoundary();
-    if (!isGameOver)
+    if (wnd.kbd.KeyIsPressed(VK_RETURN))
     {
-        if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+        isStarted = true;
+    }
+    if (isStarted)
+    {
+        brd.DrawBoundary();
+        if (!isGameOver)
         {
-            delta_loc = { 1 , 0 };
-        }
-        if (wnd.kbd.KeyIsPressed(VK_LEFT))
-        {
-            delta_loc = { -1 , 0 };
-        }
-        if (wnd.kbd.KeyIsPressed(VK_UP))
-        {
-            delta_loc = { 0 , -1 };
-        }
-        if (wnd.kbd.KeyIsPressed(VK_DOWN))
-        {
-            delta_loc = { 0 , 1 };
-        }
-        snekMoveCounter++;
-        if (snekMoveCounter >= snekMovePeriod)
-        {
-            snekMoveCounter = 0;
             
-            if (wnd.kbd.KeyIsPressed(VK_CONTROL))
+            if (wnd.kbd.KeyIsPressed(VK_RIGHT))
             {
-                snek.Grow();
+                delta_loc = { 1 , 0 };
             }
-            snek.MoveBy(delta_loc);
+            if (wnd.kbd.KeyIsPressed(VK_LEFT))
+            {
+                delta_loc = { -1 , 0 };
+            }
+            if (wnd.kbd.KeyIsPressed(VK_UP))
+            {
+                delta_loc = { 0 , -1 };
+            }
+            if (wnd.kbd.KeyIsPressed(VK_DOWN))
+            {
+                delta_loc = { 0 , 1 };
+            }
+            frameNumber++;
+            snekMovePeriod = defaultSnekMovePeriod - frameNumber / snekAccelerationPerFrame;
+            snekMoveCounter++;
+            if (snekMoveCounter >= snekMovePeriod)
+            {
+                snekMoveCounter = 0;
+                
+                Location next = snek.GetNextHeadLocation(delta_loc);
+                if (!brd.IsWithinBoard(next) || snek.IsInTileExceptEnd(next))
+                {
+                    isGameOver = true;
+                }
+                else
+                {
+                    bool eating = snek.IsInTile(goal.GetLocation());
+                    if (eating)
+                    {
+                        snek.Grow();
+                    }
+                    snek.MoveBy(delta_loc);
+                    if (eating)
+                    {
+                        goal.Respawn(brd, rng, snek);//We need to move the snake first and then respawn the goal.
+                    }
+                }
+            }
+            
+
         }
-        Location next = snek.GetNextHeadLocation(delta_loc);
-        if (!brd.IsWithinBoard(next) || snek.IsInTileExceptEnd(next))
-        {
-            isGameOver = true;
-        }
-        
     }
 }
 
 void Game::ComposeFrame()
 {
-    snek.Draw(brd);
-    goal.Draw(gfx,brd);
-    if (isGameOver)
+    if (!isStarted)
     {
-        SpriteCodex::DrawGameOver(350, 250, gfx);
+        SpriteCodex::DrawTitle(300, 200, gfx);
+    }
+    else
+    {
+        snek.Draw(brd);
+        goal.Draw(brd);
+        if (isGameOver)
+        {
+            SpriteCodex::DrawGameOver(350, 250, gfx);
+        }
     }
 }

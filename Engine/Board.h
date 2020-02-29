@@ -18,11 +18,13 @@ public:
 	int GetDimension() const;
 	bool IsWithinBoard(const Location& loc) const;
 private:
-	static constexpr int startX = 7;
+	static constexpr int startX = 3;
 	static constexpr int startY = 2;
 	static constexpr int dimension = 20;
-	static constexpr int width = 25;
+	static constexpr int boundaryThickness = 10;
+	static constexpr int width = 33;
 	static constexpr int height = 25;
+	static constexpr int padding = 1;
 	static constexpr Color boundaryColor = Colors::Blue;
 	Graphics& gfx;
 };

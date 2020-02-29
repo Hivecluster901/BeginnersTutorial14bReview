@@ -9,7 +9,7 @@ private:
 	{
 	public:
 		void InitHead(const Location& in_loc);
-		void InitBody();
+		void InitBody(int n);
 		void Follow(const Segment& next);
 		void MoveBy(const Location& delta_loc);
 		void Draw(Board& brd) const;
@@ -26,9 +26,9 @@ public:
 	void Draw(Board& brd) const;
 	Location GetNextHeadLocation(const Location& delta_loc) const;
 	bool IsInTileExceptEnd(const Location& loc ) const;
+	bool IsInTile(const Location& loc) const;
 private:
 	static constexpr Color headColor = Colors::Yellow;
-	static constexpr Color bodyColor = Colors::Green;
 	static constexpr int nSegmentsMax = 100;
 	Segment segments[nSegmentsMax];
 	int nSegments = 1;// size of the array.
