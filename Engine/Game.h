@@ -28,6 +28,7 @@
 #include "Location.h"
 #include "Goal.h"
 #include <random>
+#include "Obstacle.h"
 
 class Game
 {
@@ -53,11 +54,16 @@ private:
     int snekMovePeriod = defaultSnekMovePeriod;
     int snekAccelerationPerFrame = 1000;
     int snekMoveCounter = 0;
-    int frameNumber = 0;
+    int frameNumberSnek = 0;
+    int frameNumberObstacle = 0;
     Board brd;
     Location delta_loc = { 1, 0 };
     Snake snek;
     Goal goal;
+    int obstacleNum = 0;
+    static constexpr int MaxObstacleNum = 30;
+    int PutObstaclesPeriod = 300;
+    Obstacle obstacles[MaxObstacleNum];
     bool isStarted = false;
     bool isGameOver = false;
 	/********************************/

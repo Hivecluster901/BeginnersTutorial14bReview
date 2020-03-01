@@ -33,7 +33,10 @@ Game::Game(MainWindow& wnd)
     goal(brd, rng, snek)
     
 {
-    
+    for (int i = 0; i < obstacleNum; i++)
+    {
+        obstacles[i].Init(brd, rng, snek, goal, obstacles, obstacleNum);
+    }
 }
 
 void Game::Go()
@@ -72,15 +75,29 @@ void Game::UpdateModel()
             {
                 delta_loc = { 0 , 1 };
             }
-            frameNumber++;
-            snekMovePeriod = defaultSnekMovePeriod - frameNumber / snekAccelerationPerFrame;
+            frameNumberSnek++;
+            frameNumberObstacle++;
+            snekMovePeriod = defaultSnekMovePeriod - frameNumberSnek / snekAccelerationPerFrame;
             snekMoveCounter++;
+            if (frameNumberObstacle >= PutObstaclesPeriod && obstacleNum < MaxObstacleNum)
+            {
+                obstacleNum++;
+                frameNumberObstacle = 0;
+            }
             if (snekMoveCounter >= snekMovePeriod)
             {
                 snekMoveCounter = 0;
                 
+                obstacles[obstacleNum].Init(brd, rng, snek, goal, obstacles, obstacleNum);
+
+                bool CollideToObstacle = false;
+                
                 Location next = snek.GetNextHeadLocation(delta_loc);
-                if (!brd.IsWithinBoard(next) || snek.IsInTileExceptEnd(next))
+                for (int i = 0; i < obstacleNum; i++)
+                {
+                    CollideToObstacle = CollideToObstacle || obstacles[i].GetLocation() == next;
+                }
+                if (!brd.IsWithinBoard(next) || snek.IsInTileExceptEnd(next) || CollideToObstacle)
                 {
                     isGameOver = true;
                 }
@@ -114,6 +131,10 @@ void Game::ComposeFrame()
     {
         snek.Draw(brd);
         goal.Draw(brd);
+        for (int i = 0; i < obstacleNum; i++)
+        {
+            obstacles[i].Draw(brd);
+        }
         if (isGameOver)
         {
             SpriteCodex::DrawGameOver(350, 250, gfx);
